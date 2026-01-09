@@ -38,7 +38,6 @@ class Aircraft:
             r1, c1 = self.route[i]
             r2, c2 = self.route[i + 1]
             
-            # Diagonale o ortogonale?
             if abs(r2 - r1) == 1 and abs(c2 - c1) == 1:
                 total_length += ENERGY_COST_DIAGONAL
             else:
