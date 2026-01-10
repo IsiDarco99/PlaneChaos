@@ -5,6 +5,10 @@ from config.config import DIRECTIONS
 class Grid:
     def __init__(self, size: int):
         self.size = size
+        self.rows = size
+        self.cols = size
+        # Griglia 2D: 0 = libero, 1 = ostacolo (attualmente tutto libero)
+        self.grid = [[0 for _ in range(size)] for _ in range(size)]
     
     def is_valid_position(self, position: Tuple[int, int]) -> bool:
         row, col = position

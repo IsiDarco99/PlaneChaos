@@ -1,9 +1,9 @@
-GRID_SIZE = 50 # Dimensione della griglia
+GRID_SIZE = 20 # Dimensione della griglia
 
-NUM_AIRPORTS = 5 # Numero di aeroporti
-MIN_AIRPORT_DISTANCE = 10 # Distanza minima tra aeroporti
+NUM_AIRPORTS = 15 # Numero di aeroporti
+MIN_AIRPORT_DISTANCE = 4 # Distanza minima tra aeroporti
 
-NUM_AIRCRAFT = 20 # Numero di aerei
+NUM_AIRCRAFT = 50 # Numero di aerei
 MAX_SIMULATION_TIME = 200 # Tempo massimo
 
 DIRECTIONS = [
@@ -17,13 +17,13 @@ DIRECTIONS = [
     (-1, -1),  # Nord-Ovest
 ]
 
-ENERGY_COST_STRAIGHT = 1.0 # Costo energetico per movimento ortogonale
+ENERGY_COST_STRAIGHT = 0.1 # Costo energetico per movimento ortogonale
 ENERGY_COST_DIAGONAL = 1.414 # Costo energetico per movimento diagonale
 
 LAMBDA_WEIGHT = 0.1  # Peso per bilanciare tempo vs lunghezza rotte
 
-POPULATION_SIZE = 50  # Dimensione della popolazione
-MAX_GENERATIONS = 100  # Numero massimo di generazioni
+POPULATION_SIZE = 100  # Dimensione della popolazione
+MAX_GENERATIONS = 1000  # Numero massimo di generazioni
 TOURNAMENT_SIZE = 5  # Dimensione del torneo per la selezione
-MUTATION_RATE = 0.2  # Probabilità di mutazione del tempo di partenza
-CONVERGENCE_GENERATIONS = 20  # Generazioni con fitness invariato per convergenza
+MUTATION_RATE = 0.5  # Probabilità di mutazione del tempo di partenza
+CONVERGENCE_GENERATIONS = 50  # Generazioni con fitness invariato per convergenza

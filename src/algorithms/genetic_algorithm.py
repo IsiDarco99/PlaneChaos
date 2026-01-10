@@ -1,6 +1,6 @@
 import random
 import copy
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 from src.environment.environment import Environment
 from src.environment.aircraft import Aircraft
 from src.environment.grid import Grid
@@ -17,7 +17,7 @@ from config.config import (
 
 
 class GeneticAlgorithm:
-    def __init__(self, environment: Environment, seed: int = None):
+    def __init__(self, environment: Environment, seed: int = None, save_snapshots: bool = False, snapshot_interval: int = 5):
         if seed is not None:
             random.seed(seed)
         
@@ -27,6 +27,9 @@ class GeneticAlgorithm:
         self.best_solution: List[Aircraft] = None
         self.best_fitness: float = float('-inf')
         self.fitness_history: List[float] = []
+        self.save_snapshots = save_snapshots
+        self.snapshot_interval = snapshot_interval
+        self.snapshots: Dict[int, List[Aircraft]] = {}  # {generation: best_solution}
     
     def initialize_population(self):
         print("Inizializzazione popolazione...")
@@ -139,6 +142,11 @@ class GeneticAlgorithm:
         best_fitness_in_generation = max(calculate_fitness(ind) for ind in self.population)
         self.fitness_history.append(best_fitness_in_generation)
         
+        # Salva snapshot generazione 0
+        if self.save_snapshots:
+            best_ind = max(self.population, key=lambda ind: calculate_fitness(ind))
+            self.snapshots[0] = copy.deepcopy(best_ind)
+        
         generations_without_improvement = 0
         previous_best_fitness = best_fitness_in_generation
         
@@ -183,6 +191,11 @@ class GeneticAlgorithm:
                 self.best_fitness = current_best_fitness
                 self.best_solution = max(self.population, key=lambda ind: calculate_fitness(ind))
             
+            # Salva snapshot ogni N generazioni
+            if self.save_snapshots and generation % self.snapshot_interval == 0:
+                best_ind = max(self.population, key=lambda ind: calculate_fitness(ind))
+                self.snapshots[generation] = copy.deepcopy(best_ind)
+            
             # Convergenza
             if abs(current_best_fitness - previous_best_fitness) < 1e-6:
                 generations_without_improvement += 1
@@ -198,6 +211,10 @@ class GeneticAlgorithm:
             # Stopping condition: convergenza
             if generations_without_improvement >= CONVERGENCE_GENERATIONS:
                 print(f"\nConvergenza raggiunta dopo {generation} generazioni")
+                # Salva ultimo snapshot se non già salvato
+                if self.save_snapshots and generation not in self.snapshots:
+                    best_ind = max(self.population, key=lambda ind: calculate_fitness(ind))
+                    self.snapshots[generation] = copy.deepcopy(best_ind)
                 break
         
         print(f"\nAlgoritmo terminato. Best Fitness = {self.best_fitness:.2f}")
