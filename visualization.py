@@ -127,6 +127,26 @@ class VisualizationApp:
         ga = GeneticAlgorithm(env, seed=seed, save_snapshots=True, snapshot_interval=5)
         best_solution, fitness_history = ga.evolve()
         
+        # Calcola metriche finali per mostrare dettagli fitness
+        from src.utils.metrics import calculate_completion_time
+        from config.config import NUM_AIRCRAFT
+        
+        completion_time = calculate_completion_time(best_solution)
+        total_departure_delay = sum(aircraft.departure_time for aircraft in best_solution)
+        avg_departure_delay = total_departure_delay / NUM_AIRCRAFT
+        
+        print(f"\n{'='*60}")
+        print(f"DETTAGLI BEST FITNESS ({ga.best_fitness:.2f})")
+        print(f"{'='*60}")
+        print(f"Tempo completamento:     {completion_time} tick")
+        print(f"Ritardo totale partenze: {total_departure_delay} tick")
+        print(f"Numero aerei:            {NUM_AIRCRAFT}")
+        print(f"Ritardo medio partenza:  {avg_departure_delay:.2f} tick")
+        print(f"Formula fitness: -(completion_time + avg_departure_delay)")
+        print(f"                = -({completion_time} + {avg_departure_delay:.2f})")
+        print(f"                = {ga.best_fitness:.2f}")
+        print(f"{'='*60}")
+        
         # Prepara dati aeroporti
         airports_data = [
             {'id': airport.id, 'position': airport.position}
@@ -205,9 +225,6 @@ class VisualizationApp:
             generation,
             "Gen:"
         )
-        
-        # Info panel (a destra della griglia)
-        # self.info_panel = InfoPanel(pygame.Rect(self.width - 180, 50, 170, 200))
     
     def handle_events(self):
         """Gestisce gli eventi pygame"""
@@ -275,12 +292,19 @@ class VisualizationApp:
         collisions_at_tick = self.simulation_manager.get_collisions_at_tick(current_tick)
         total_collisions = self.simulation_manager.get_total_collisions()
         current_gen = self.generation_dropdown.get_value()
+        
+        # Calcola avg_departure_delay per la generazione corrente
+        total_departure_delay = sum(aircraft.departure_time for aircraft in self.simulation_manager.aircraft_list)
+        from config.config import NUM_AIRCRAFT
+        avg_departure_delay = total_departure_delay / NUM_AIRCRAFT
+        
         self.renderer.draw_info_panel(
             current_tick,
             self.current_seed,
             current_gen,
             collisions_at_tick,
-            total_collisions
+            total_collisions,
+            avg_departure_delay
         )
         
         # UI Components

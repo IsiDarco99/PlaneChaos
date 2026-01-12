@@ -6,14 +6,7 @@ from src.environment.aircraft import Aircraft
 from src.environment.grid import Grid
 from src.utils.a_star import astar_path, astar_path_temporal
 from src.utils.metrics import calculate_fitness, check_collisions
-from config.config import (
-    POPULATION_SIZE,
-    MAX_GENERATIONS,
-    TOURNAMENT_SIZE,
-    MUTATION_RATE,
-    CONVERGENCE_GENERATIONS,
-    MAX_SIMULATION_TIME
-)
+import config.config as config
 
 
 class GeneticAlgorithm:
@@ -34,7 +27,7 @@ class GeneticAlgorithm:
     def initialize_population(self):
         print("Inizializzazione popolazione...")
         
-        for _ in range(POPULATION_SIZE):
+        for _ in range(config.POPULATION_SIZE):
             individual = [
                 Aircraft(
                     aircraft.id,
@@ -65,10 +58,10 @@ class GeneticAlgorithm:
         
             self.population.append(individual)
         
-        print(f"Popolazione iniziale creata: {POPULATION_SIZE} individui")
+        print(f"Popolazione iniziale creata: {config.POPULATION_SIZE} individui")
     
     def tournament_selection(self) -> List[Aircraft]:
-        tournament = random.sample(self.population, TOURNAMENT_SIZE)
+        tournament = random.sample(self.population, config.TOURNAMENT_SIZE)
         winner = max(tournament, key=lambda ind: calculate_fitness(ind))
         return copy.deepcopy(winner)
     
@@ -96,8 +89,8 @@ class GeneticAlgorithm:
     
     def mutate_departure_time(self, individual: List[Aircraft]):
         for aircraft in individual:
-            if random.random() < MUTATION_RATE:
-                max_delay = MAX_SIMULATION_TIME // 4  # Ritardo massimo ragionevole
+            if random.random() < config.MUTATION_RATE:
+                max_delay = config.MAX_SIMULATION_TIME // 4  # Ritardo massimo ragionevole
                 aircraft.set_departure_time(random.randint(0, max_delay))
     
     def mutate_with_astar_deviation(self, individual: List[Aircraft], grid: Grid):
@@ -152,15 +145,15 @@ class GeneticAlgorithm:
         
         print(f"\nGen 0: Best Fitness = {best_fitness_in_generation:.2f}")
         
-        for generation in range(1, MAX_GENERATIONS+1):
+        for generation in range(1, config.MAX_GENERATIONS+1):
             new_population = []
 
             # ELITISMO: mantieni i migliori k individui
-            elite_size = max(1, POPULATION_SIZE // 10)
+            elite_size = max(1, config.POPULATION_SIZE // 10)
             elite = sorted(self.population, key=lambda ind: calculate_fitness(ind), reverse=True)[:elite_size]
             new_population.extend([copy.deepcopy(ind) for ind in elite])
             
-            while len(new_population) < POPULATION_SIZE:
+            while len(new_population) < config.POPULATION_SIZE:
                 # Selezione
                 parent1 = self.tournament_selection()
                 parent2 = self.tournament_selection()
@@ -177,7 +170,7 @@ class GeneticAlgorithm:
                 self.mutate_with_astar_deviation(child2, self.grid)
                 
                 new_population.append(child1)
-                if len(new_population) < POPULATION_SIZE:
+                if len(new_population) < config.POPULATION_SIZE:
                     new_population.append(child2)
             
             self.population = new_population
@@ -205,11 +198,11 @@ class GeneticAlgorithm:
             previous_best_fitness = current_best_fitness
             
             # Stampa progresso
-            if generation % 10 == 0 or generation == MAX_GENERATIONS:
+            if generation % 10 == 0 or generation == config.MAX_GENERATIONS:
                 print(f"Gen {generation}: Best Fitness = {current_best_fitness:.2f}")
             
             # Stopping condition: convergenza
-            if generations_without_improvement >= CONVERGENCE_GENERATIONS:
+            if generations_without_improvement >= config.CONVERGENCE_GENERATIONS:
                 print(f"\nConvergenza raggiunta dopo {generation} generazioni")
                 # Salva ultimo snapshot se non già salvato
                 if self.save_snapshots and generation not in self.snapshots:

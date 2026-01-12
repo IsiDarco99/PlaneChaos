@@ -17,11 +17,6 @@ DIRECTIONS = [
     (-1, -1),  # Nord-Ovest
 ]
 
-ENERGY_COST_STRAIGHT = 0.1 # Costo energetico per movimento ortogonale
-ENERGY_COST_DIAGONAL = 1.414 # Costo energetico per movimento diagonale
-
-LAMBDA_WEIGHT = 0.1  # Peso per bilanciare tempo vs lunghezza rotte
-
 POPULATION_SIZE = 100  # Dimensione della popolazione
 MAX_GENERATIONS = 1000  # Numero massimo di generazioni
 TOURNAMENT_SIZE = 5  # Dimensione del torneo per la selezione

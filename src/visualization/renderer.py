@@ -117,13 +117,14 @@ class Renderer:
         self.screen.blit(text, text_rect)
     
     def draw_info_panel(self, tick: int, seed: int, generation: int, 
-                       collisions_at_tick: List[Tuple[int, int]], total_collisions: int):
+                       collisions_at_tick: List[Tuple[int, int]], total_collisions: int,
+                       avg_departure_delay: float):
         panel_rect = pygame.Rect(0, 0, self.screen.get_width(), 40)
         pygame.draw.rect(self.screen, self.GRAY, panel_rect)
         pygame.draw.rect(self.screen, self.BLACK, panel_rect, 2)
         
         # Testo info
-        info_text = f"Tick: {tick}  |  Seed: {seed}  |  Generazione: {generation}"
+        info_text = f"Tick: {tick}  |  Avg Delay: {avg_departure_delay:.2f}  |  Seed: {seed}  |  Gen: {generation}"
         text_surface = self.font_medium.render(info_text, True, self.BLACK)
         self.screen.blit(text_surface, (10, 10))
         

@@ -52,8 +52,8 @@ def main():
     print(f"Numero aerei:           {stats['num_aircraft']}")
     print(f"Collisioni:             {stats['num_collisions']}")
     print(f"Tempo completamento:    {stats['completion_time']} tick")
-    print(f"Lunghezza totale rotte: {stats['total_route_length']:.2f}")
-    print(f"Lunghezza media rotta:  {stats['avg_route_length']:.2f}")
+    print(f"Ritardo totale partenze: {stats['total_departure_delay']} tick")
+    print(f"Ritardo medio partenza:  {stats['avg_departure_delay']:.2f} tick")
     print(f"Fitness finale:         {stats['fitness']:.2f}")
     
     if stats['num_collisions'] > 0:
@@ -77,7 +77,6 @@ def main():
         print(f"Aereo {aircraft.id}:")
         print(f"  Da aeroporto {aircraft.start_airport_id} a {aircraft.destination_airport_id}")
         print(f"  Partenza: tick {aircraft.departure_time}")
-        print(f"  Lunghezza rotta: {aircraft.calculate_route_length():.2f}")
         print(f"  Tempo arrivo: tick {aircraft.departure_time + len(aircraft.route) - 1}")
     
     if len(best_solution) > 5:

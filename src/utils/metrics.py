@@ -1,12 +1,12 @@
 from typing import List, Tuple, Dict, Set
 from src.environment.aircraft import Aircraft
-from config.config import MAX_SIMULATION_TIME, LAMBDA_WEIGHT
+import config.config as config
 
 
 def check_collisions(aircraft_list: List[Aircraft]) -> Tuple[int, List[Tuple[int, int, int]]]:
     collisions_detail = []
     
-    for t in range(MAX_SIMULATION_TIME):
+    for t in range(config.MAX_SIMULATION_TIME):
         positions: Dict[Tuple[int, int], List[int]] = {}
         
         for aircraft in aircraft_list:
@@ -34,22 +34,18 @@ def calculate_completion_time(aircraft_list: List[Aircraft]) -> int:
     return max_time
 
 
-def calculate_total_route_length(aircraft_list: List[Aircraft]) -> float:
-    return sum(aircraft.calculate_route_length() for aircraft in aircraft_list)
-
-
 def calculate_fitness(
     aircraft_list: List[Aircraft],
-    lambda_weight: float = LAMBDA_WEIGHT,
     collision_penalty: float = 10000.0
 ) -> float:
-    
     num_collisions, _ = check_collisions(aircraft_list)
     
     completion_time = calculate_completion_time(aircraft_list)
-    total_length = calculate_total_route_length(aircraft_list)
+    total_departure_delay = sum(aircraft.departure_time for aircraft in aircraft_list)
+    avg_departure_delay = total_departure_delay / config.NUM_AIRCRAFT
     
-    fitness = -(completion_time + lambda_weight * total_length) # Fitness negativo perché vogliamo massimizzare
+    # Fitness: minimizza tempo + ritardo medio
+    fitness = -(completion_time + avg_departure_delay)
     
     if num_collisions > 0:
         fitness -= collision_penalty * num_collisions
@@ -60,15 +56,16 @@ def calculate_fitness(
 def get_solution_statistics(aircraft_list: List[Aircraft]) -> Dict:
     num_collisions, collisions_detail = check_collisions(aircraft_list)
     completion_time = calculate_completion_time(aircraft_list)
-    total_length = calculate_total_route_length(aircraft_list)
+    total_departure_delay = sum(aircraft.departure_time for aircraft in aircraft_list)
+    avg_departure_delay = total_departure_delay / len(aircraft_list) if aircraft_list else 0
     fitness = calculate_fitness(aircraft_list)
     
     return {
         "num_aircraft": len(aircraft_list),
         "num_collisions": num_collisions,
         "completion_time": completion_time,
-        "total_route_length": total_length,
-        "avg_route_length": total_length / len(aircraft_list) if aircraft_list else 0,
+        "total_departure_delay": total_departure_delay,
+        "avg_departure_delay": avg_departure_delay,
         "fitness": fitness,
         "collisions_detail": collisions_detail
     }
