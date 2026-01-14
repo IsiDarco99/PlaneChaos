@@ -42,15 +42,14 @@ class VisualizationApp:
         self.blink_state = False
     
     def cleanup_simulation_files(self):
-        """Elimina i file di simulazione salvati"""
         if self.current_seed is not None:
             filename = os.path.join("output", f"simulation_seed{self.current_seed}.json")
             if os.path.exists(filename):
                 try:
                     os.remove(filename)
-                    print(f"\n🗑️  File di simulazione eliminato: {filename}")
+                    print(f"\nFile di simulazione eliminato: {filename}")
                 except Exception as e:
-                    print(f"\n⚠️  Errore durante l'eliminazione del file: {e}")
+                    print(f"\nErrore durante l'eliminazione del file: {e}")
     
     def show_startup_menu(self) -> tuple:
         font = pygame.font.SysFont('Arial', 20)
@@ -108,7 +107,6 @@ class VisualizationApp:
                     input_active = input_box.collidepoint(event.pos)
                 
                 if random_button.handle_event(event):
-                    # Usa seed inserito o generane uno random
                     if input_text.isdigit():
                         return int(input_text), True
                     else:
@@ -127,7 +125,6 @@ class VisualizationApp:
         ga = GeneticAlgorithm(env, seed=seed, save_snapshots=True, snapshot_interval=5)
         best_solution, fitness_history = ga.evolve()
         
-        # Calcola metriche finali per mostrare dettagli fitness
         from src.utils.metrics import calculate_completion_time
         from config.config import NUM_AIRCRAFT
         
@@ -147,13 +144,11 @@ class VisualizationApp:
         print(f"                = {ga.best_fitness:.2f}")
         print(f"{'='*60}")
         
-        # Prepara dati aeroporti
         airports_data = [
             {'id': airport.id, 'position': airport.position}
             for airport in env.airports
         ]
         
-        # Salva simulazione
         save_simulation(
             seed=seed,
             generations_data=ga.snapshots,
@@ -163,18 +158,17 @@ class VisualizationApp:
             output_dir="output"
         )
         
-        print(f"\n✓ Simulazione completata e salvata!")
+        print(f"\nSimulazione completata e salvata!")
     
     def load_simulation_data(self, seed: int):
-        """Carica i dati della simulazione"""
         try:
             self.simulation_data = load_simulation(seed)
             self.current_seed = seed
-            print(f"\n✓ Simulazione caricata: seed {seed}")
+            print(f"\nSimulazione caricata: seed {seed}")
             print(f"  Generazioni disponibili: {self.simulation_data['available_generations']}")
             return True
         except FileNotFoundError:
-            print(f"\n✗ Simulazione con seed {seed} non trovata!")
+            print(f"\nSimulazione con seed {seed} non trovata!")
             return False
     
     def setup_visualization(self, generation: int):

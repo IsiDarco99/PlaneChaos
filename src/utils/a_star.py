@@ -10,12 +10,7 @@ def heuristic(pos1: Tuple[int, int], pos2: Tuple[int, int]) -> float: #Distance 
 def astar_path(
     grid: Grid,
     start: Tuple[int, int],
-    goal: Tuple[int, int],
-    obstacles: Set[Tuple[int, int]] = None
-) -> Optional[List[Tuple[int, int]]]:
-    
-    if obstacles is None:
-        obstacles = set()
+    goal: Tuple[int, int]):
     
     counter = 0 # counter serve per risolvere i tie-breaking
     open_set = [(0, counter, start)]
@@ -40,7 +35,7 @@ def astar_path(
         closed_set.add(current)
         
         for neighbor in grid.get_neighbors(current):
-            if neighbor in closed_set or neighbor in obstacles:
+            if neighbor in closed_set:
                 continue
             
             if abs(neighbor[0] - current[0]) + abs(neighbor[1] - current[1]) == 2:
@@ -65,8 +60,7 @@ def astar_path(
 
 def reconstruct_path(
     came_from: Dict[Tuple[int, int], Tuple[int, int]],
-    current: Tuple[int, int]
-) -> List[Tuple[int, int]]: # ricostruisce il percorso dal dizionario came_from
+    current: Tuple[int, int]): # ricostruisce il percorso dal dizionario came_from
     path = [current]
     while current in came_from:
         current = came_from[current]
@@ -83,8 +77,7 @@ def astar_path_temporal(
     start: Tuple[int, int],
     goal: Tuple[int, int],
     departure_time: int,
-    occupied_cells: Dict[Tuple[int, int, int], int]
-) -> Optional[List[Tuple[int, int]]]:
+    occupied_cells: Dict[Tuple[int, int, int], int]):
     
     start_state = (start[0], start[1], departure_time)
     
@@ -167,8 +160,7 @@ def astar_path_temporal(
 def reconstruct_path_temporal(
     came_from: Dict[Tuple[int, int, int], Tuple[int, int, int]],
     current: Tuple[int, int, int],
-    start: Tuple[int, int]
-) -> List[Tuple[int, int]]:
+    start: Tuple[int, int]):
     path = [(current[0], current[1])]  # Solo (row, col)
     
     while current in came_from:

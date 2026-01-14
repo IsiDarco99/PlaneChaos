@@ -44,7 +44,6 @@ def calculate_fitness(
     total_departure_delay = sum(aircraft.departure_time for aircraft in aircraft_list)
     avg_departure_delay = total_departure_delay / config.NUM_AIRCRAFT
     
-    # Fitness: minimizza tempo + ritardo medio
     fitness = -(completion_time + avg_departure_delay)
     
     if num_collisions > 0:

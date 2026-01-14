@@ -63,7 +63,7 @@ def save_simulation(seed: int, generations_data: Dict[int, List[Aircraft]],
     with open(filename, 'w') as f:
         json.dump(simulation_data, f, indent=2)
     
-    print(f"\n💾 Simulazione salvata in: {filename}")
+    print(f"\nSimulazione salvata in: {filename}")
     return filename
 
 
