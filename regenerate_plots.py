@@ -88,9 +88,9 @@ def regenerate_all_plots(csv_path: str):
     print(f"  • Configurazioni 0 collisioni: {(df['num_collisions'] == 0).sum()}/{len(df)}")
     
 
-    print(f"\nTOP 3 CONFIGURAZIONI:")
-    top_3 = df.nsmallest(3, 'completion_time')
-    for rank, (idx, row) in enumerate(top_3.iterrows(), 1):
+    print(f"\nTOP 10 CONFIGURAZIONI:")
+    top_10 = df.nlargest(10, 'best_fitness')
+    for rank, (idx, row) in enumerate(top_10.iterrows(), 1):
         print(f"\n  #{rank}:")
         param_cols = [col for col in df.columns if col in ['POPULATION_SIZE', 'TOURNAMENT_SIZE', 'MUTATION_RATE', 'CONVERGENCE_GENERATIONS']]
         params_str = ", ".join([f"{col.replace('_', ' ').title()}={row[col]:.2f}" if isinstance(row[col], float) else f"{col.replace('_', ' ').title()}={int(row[col])}" for col in param_cols])
@@ -98,6 +98,7 @@ def regenerate_all_plots(csv_path: str):
         print(f"     → Tempo: {row['completion_time']:.0f} tick | "
               f"Ritardo: {row['avg_departure_delay']:.2f} | "
               f"Fitness: {row['best_fitness']:.2f} | "
+              f"Generazioni per convergenza: {row['generations']:.2f} | "
               f"Collisioni: {int(row['num_collisions'])}")
     
     # Genera grafici
